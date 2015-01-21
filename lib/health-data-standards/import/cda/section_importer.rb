@@ -20,7 +20,7 @@ module HealthDataStandards
         end
 
         # Traverses an HL7 CDA document passed in and creates an Array of Entry
-        # objects based on what it finds                          
+        # objects based on what it finds
         # @param [Nokogiri::XML::Document] doc It is expected that the root node of this document
         #        will have the "cda" namespace registered to "urn:hl7-org:v3"
         #        measure definition
@@ -129,14 +129,14 @@ module HealthDataStandards
               unit = value_element['unit']
               entry.set_value(value.strip, unit)
             end
-            
+
           end
         end
-        
+
         def import_actor(actor_element)
           return ProviderImporter.instance.extract_provider(actor_element)
         end
-        
+
         def import_organization(organization_element)
           return OrganizationImporter.instance.extract_organization(organization_element)
         end
@@ -151,7 +151,7 @@ module HealthDataStandards
             person.family_name = name_element.at_xpath("./cda:family").try(:text)
           end
           person.addresses = person_element.xpath("./cda:addr").map { |addr| import_address(addr) }
-          person.telecoms = person_element.xpath("./cda:telecom").map { |tele| import_telecom(tele) } 
+          person.telecoms = person_element.xpath("./cda:telecom").map { |tele| import_telecom(tele) }
           return person
         end
 
@@ -170,7 +170,7 @@ module HealthDataStandards
             end
           end
         end
-    
+
         def extract_code(parent_element, code_xpath, code_system=nil)
           code_element = parent_element.at_xpath(code_xpath)
           code_hash = nil
@@ -190,7 +190,7 @@ module HealthDataStandards
         def extract_scalar(parent_element, scalar_xpath)
           scalar_element = parent_element.at_xpath(scalar_xpath)
           if scalar_element
-            {'unit' => scalar_element['unit'], 'value' => scalar_element['value'].to_i}
+            {'unit' => scalar_element['unit'], 'value' => scalar_element['value'].to_f}
           else
             nil
           end

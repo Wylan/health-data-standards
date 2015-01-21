@@ -6,3 +6,5 @@ tmp
 .idea
 .rvmrc
 
+.ruby-gemset
+.ruby-version
