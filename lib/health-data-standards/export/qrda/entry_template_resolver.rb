@@ -5,7 +5,7 @@ module HealthDataStandards
         def hqmf_qrda_oid_map
           if @hqmf_qrda_oid_map.blank?
             template_id_file = File.expand_path('../hqmf-qrda-oids.json', __FILE__)
-            @hqmf_qrda_oid_map = JSON.parse(File.read(template_id_file))  
+            @hqmf_qrda_oid_map = JSON.parse(File.read(template_id_file))
           end
           @hqmf_qrda_oid_map
         end
@@ -23,6 +23,7 @@ module HealthDataStandards
             if oid_tuple.nil?
               puts "no qrda oid for #{hqmf_oid}"
             end
+            HealthDataStandards.logger.warn oid_tuple.inspect
             oid_tuple['qrda_oid']
           end
 

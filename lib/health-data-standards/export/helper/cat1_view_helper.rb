@@ -5,9 +5,13 @@ module HealthDataStandards
         include HealthDataStandards::Export::Helper::ScoopedViewHelper
 
         def render_data_criteria(dc, entries)
+          HealthDataStandards.logger.warn("in render")
           html_array = entries.map do |entry|
+              HealthDataStandards.logger.warn("entry loop")
               bundle_id = entry.record ? entry.record["bundle_id"] : nil
+              HealthDataStandards.logger.warn("bundle id")
               vs_map = (value_set_map(bundle_id) || {})[dc['value_set_oid']]
+              HealthDataStandards.logger.warn("vs map")
               render(:partial => HealthDataStandards::Export::QRDA::EntryTemplateResolver.partial_for(dc['data_criteria_oid'], dc['value_set_oid']), :locals => {:entry => entry,
                                                                                                                                    :data_criteria => dc['data_criteria'],
                                                                                                                                    :value_set_oid => dc['value_set_oid'],
@@ -23,8 +27,10 @@ module HealthDataStandards
           udcs = unique_data_criteria(measures)
 
           data_criteria_html = udcs.map do |udc|
+            HealthDataStandards.logger.warn("UDC loop")
             entries = entries_for_data_criteria(udc['data_criteria'], patient)
-            render_data_criteria(udc, entries)          
+            HealthDataStandards.logger.warn("About to render")
+            render_data_criteria(udc, entries)
           end
           data_criteria_html.compact.join("\n")
         end

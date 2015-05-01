@@ -87,7 +87,8 @@ module HealthDataStandards
           when '2.16.840.1.113883.3.560.1.405'
             filtered_entries = handle_payer_information(patient)
           else
-            entries.concat patient.entries_for_oid(data_criteria_oid)
+            HealthDataStandards.logger.warn("Looking for #{data_criteria.code_list_id}")
+            entries.concat patient.entries_for_oid(data_criteria.code_list_id)
 
               case data_criteria_oid
               when '2.16.840.1.113883.3.560.1.5'
@@ -106,16 +107,20 @@ module HealthDataStandards
               end
 
             codes = (value_set_map(patient["bundle_id"])[data_criteria.code_list_id] || [])
+            HealthDataStandards.logger.warn("found codes #{codes.each(&:inspect)}")
             if codes.empty?
               HealthDataStandards.logger.warn("No codes for #{data_criteria.code_list_id}")
             end
             entries.uniq! {|e| e["_id"]}
+            HealthDataStandards.logger.warn("found entries #{entries.collect(&:_id).join(', ')}")
             filtered_entries = entries.find_all do |entry|
               # This special case is for when the code list is a reason
               if data_criteria.code_list_id =~ /2\.16\.840\.1\.113883\.3\.526\.3\.100[7-9]/
+                HealthDataStandards.logger.warn("filtering reasons")
                 entry.negation_reason.present? && codes.first['values'].include?(entry.negation_reason['code'])
               else
                 # The !! hack makes sure that negation_ind is a boolean
+                HealthDataStandards.logger.warn("looking at negation")
                 entry.is_in_code_set?(codes) && !!entry.negation_ind == data_criteria.negation
               end
             end
